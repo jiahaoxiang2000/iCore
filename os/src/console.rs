@@ -17,6 +17,7 @@ impl Write for Stdout {
 }
 
 pub fn print(args: fmt::Arguments) {
+    // fmt("{}",a) = "a"
     Stdout.write_fmt(args).unwrap();
 }
 
