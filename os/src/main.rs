@@ -49,7 +49,7 @@ pub fn rust_main() -> ! {
     }
     clear_bss();
     logging::init();
-    println!("[kernel] Hello, world!");
+    println!("[kernel] Hello, world! jiahao xiang");
     trace!(
         "[kernel] .text [{:#x}, {:#x})",
         stext as usize,
