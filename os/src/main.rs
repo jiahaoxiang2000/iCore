@@ -17,11 +17,17 @@ use log::*;
 
 #[macro_use]
 mod console;
+pub mod batch;
 mod lang_items;
 mod logging;
 mod sbi;
+mod sync;
+pub mod syscall;
+pub mod trap;
 
 global_asm!(include_str!("entry.asm"));
+// for link the use level program
+global_asm!(include_str!("link_app.S"));
 
 /// clear BSS segment
 pub fn clear_bss() {
@@ -29,7 +35,10 @@ pub fn clear_bss() {
         fn sbss();
         fn ebss();
     }
-    (sbss as usize..ebss as usize).for_each(|a| unsafe { (a as *mut u8).write_volatile(0) });
+    unsafe {
+    core::slice::from_raw_parts_mut(sbss as usize as *mut u8, ebss as usize - sbss as usize)
+            .fill(0);
+    }
 }
 
 /// the rust entry-point of os
@@ -49,13 +58,12 @@ pub fn rust_main() -> ! {
     }
     clear_bss();
     logging::init();
-    println!("[kernel] Hello, world! jiahao xiang");
-    trace!(
+    info!(
         "[kernel] .text [{:#x}, {:#x})",
         stext as usize,
         etext as usize
     );
-    debug!(
+    info!(
         "[kernel] .rodata [{:#x}, {:#x})",
         srodata as usize, erodata as usize
     );
@@ -63,13 +71,13 @@ pub fn rust_main() -> ! {
         "[kernel] .data [{:#x}, {:#x})",
         sdata as usize, edata as usize
     );
-    warn!(
+    info!(
         "[kernel] boot_stack top=bottom={:#x}, lower_bound={:#x}",
         boot_stack_top as usize, boot_stack_lower_bound as usize
     );
-    error!("[kernel] .bss [{:#x}, {:#x})", sbss as usize, ebss as usize);
+    info!("[kernel] .bss [{:#x}, {:#x})", sbss as usize, ebss as usize);
 
-    // CI autotest success: sbi::shutdown(false)
-    // CI autotest failed : sbi::shutdown(true)
-    sbi::shutdown(false)
+    trap::init();
+    batch::init();
+    batch::run_next_app();
 }
