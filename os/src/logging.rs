@@ -24,9 +24,10 @@ impl Log for SimpleLogger {
             Level::Trace => 90, // BrightBlack
         };
         println!(
-            "\u{1B}[{}m[{:>5}] {}\u{1B}[0m",
+            "\u{1B}[{}m[{:>5}] [{}] {}\u{1B}[0m",
             color,
             record.level(),
+            record.module_path().unwrap_or_default(),
             record.args(),
         );
     }
