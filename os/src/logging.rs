@@ -36,12 +36,16 @@ impl Log for SimpleLogger {
 pub fn init() {
     static LOGGER: SimpleLogger = SimpleLogger;
     log::set_logger(&LOGGER).unwrap();
-    log::set_max_level(match option_env!("LOG") {
-        Some("ERROR") => LevelFilter::Error,
-        Some("WARN") => LevelFilter::Warn,
-        Some("INFO") => LevelFilter::Info,
-        Some("DEBUG") => LevelFilter::Debug,
-        Some("TRACE") => LevelFilter::Trace,
-        _ => LevelFilter::Off,
-    });
+    // here we set the max level of log, not to use env variable, if you want to use env variable, you can use the following code
+    log::set_max_level(LevelFilter::Trace);
+    
+    // log::set_max_level(match option_env!("LOG") {
+    //     Some("ERROR") => LevelFilter::Error,
+    //     Some("WARN") => LevelFilter::Warn,
+    //     Some("INFO") => LevelFilter::Info,
+    //     Some("DEBUG") => LevelFilter::Debug,
+    //     Some("TRACE") => LevelFilter::Trace,
+    //     _ => LevelFilter::Off,
+    // });
 }
+
