@@ -162,14 +162,12 @@ fn mark_current_exited() {
 
 /// suspend current task, then run next task
 pub fn suspend_current_and_run_next() {
-    log::info!("suspend_current_and_run_next");
     mark_current_suspended();
     run_next_task();
 }
 
 /// exit current task,  then run next task
 pub fn exit_current_and_run_next() {
-log::info!("exit_current_and_run_next");
     mark_current_exited();
     run_next_task();
 }
