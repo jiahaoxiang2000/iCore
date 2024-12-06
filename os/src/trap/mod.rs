@@ -18,6 +18,7 @@ use crate::syscall::syscall;
 use crate::task::{exit_current_and_run_next, suspend_current_and_run_next};
 use crate::timer::set_next_trigger;
 use core::arch::global_asm;
+use riscv::register::sstatus;
 use riscv::register::{
     mtvec::TrapMode,
     scause::{self, Exception, Interrupt, Trap},
@@ -40,6 +41,9 @@ pub fn init() {
 pub fn enable_timer_interrupt() {
     unsafe {
         sie::set_stimer();
+
+        // Enable global interrupts
+        sstatus::set_sie();
     }
 }
 

@@ -24,6 +24,8 @@ OBJCOPY := rust-objcopy --binary-architecture=riscv64
 
 # Disassembly
 DISASM ?= -x
+# Define CPU clock frequency (10MHz default)
+CLOCK_FREQ ?= 12500000
 
 build: env $(KERNEL_BIN)
 
