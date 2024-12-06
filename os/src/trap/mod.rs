@@ -67,6 +67,7 @@ pub fn trap_handler(cx: &mut TrapContext) -> &mut TrapContext {
         }
         Trap::Interrupt(Interrupt::SupervisorTimer) => {
             set_next_trigger();
+            // task schedule algorithm
             suspend_current_and_run_next();
         }
         _ => {
