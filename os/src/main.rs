@@ -15,6 +15,9 @@
 use core::arch::global_asm;
 use log::*;
 
+#[path = "boards/qemu.rs"]
+mod board;
+
 #[macro_use]
 mod console;
 pub mod batch;
@@ -22,6 +25,8 @@ mod lang_items;
 mod logging;
 mod sbi;
 mod sync;
+mod loader; 
+mod config;
 pub mod syscall;
 pub mod trap;
 
