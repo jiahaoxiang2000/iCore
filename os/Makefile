@@ -60,7 +60,7 @@ run: run-inner
 QEMU_ARGS := -machine virt \
 			 -nographic \
 			 -bios $(BOOTLOADER) \
-			 -device loader,file=$(KERNEL_BIN),addr=$(KERNEL_ENTRY_PA)
+			 -device loader,file=$(KERNEL_BIN),addr=$(KERNEL_ENTRY_PA) 
 
 QEMU_NAME := qemu-system-riscv64
 qemu-version-check:

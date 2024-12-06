@@ -53,8 +53,10 @@ pub fn rust_main() -> ! {
     logging::init();
     trap::init();
     loader::load_apps();
+    log::info!("time start: {}", timer::get_time());
     trap::enable_timer_interrupt();
     timer::set_next_trigger();
+    log::info!("time end: {}", timer::get_time());
     task::run_first_task();
     panic!("Unreachable in rust_main!");
 }
