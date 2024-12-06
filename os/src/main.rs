@@ -13,20 +13,20 @@
 #![no_main]
 
 use core::arch::global_asm;
-use log::*;
 
 #[path = "boards/qemu.rs"]
 mod board;
 
 #[macro_use]
 mod console;
-pub mod batch;
+mod task;
 mod lang_items;
 mod logging;
 mod sbi;
 mod sync;
 mod loader; 
 mod config;
+mod timer;
 pub mod syscall;
 pub mod trap;
 
@@ -49,40 +49,12 @@ pub fn clear_bss() {
 /// the rust entry-point of os
 #[no_mangle]
 pub fn rust_main() -> ! {
-    extern "C" {
-        fn stext(); // begin addr of text segment
-        fn etext(); // end addr of text segment
-        fn srodata(); // start addr of Read-Only data segment
-        fn erodata(); // end addr of Read-Only data ssegment
-        fn sdata(); // start addr of data segment
-        fn edata(); // end addr of data segment
-        fn sbss(); // start addr of BSS segment
-        fn ebss(); // end addr of BSS segment
-        fn boot_stack_lower_bound(); // stack lower bound
-        fn boot_stack_top(); // stack top
-    }
     clear_bss();
     logging::init();
-    info!(
-        "[kernel] .text [{:#x}, {:#x})",
-        stext as usize,
-        etext as usize
-    );
-    info!(
-        "[kernel] .rodata [{:#x}, {:#x})",
-        srodata as usize, erodata as usize
-    );
-    info!(
-        "[kernel] .data [{:#x}, {:#x})",
-        sdata as usize, edata as usize
-    );
-    info!(
-        "[kernel] boot_stack top=bottom={:#x}, lower_bound={:#x}",
-        boot_stack_top as usize, boot_stack_lower_bound as usize
-    );
-    info!("[kernel] .bss [{:#x}, {:#x})", sbss as usize, ebss as usize);
-
     trap::init();
-    batch::init();
-    batch::run_next_app();
+    loader::load_apps();
+    trap::enable_timer_interrupt();
+    timer::set_next_trigger();
+    task::run_first_task();
+    panic!("Unreachable in rust_main!");
 }
