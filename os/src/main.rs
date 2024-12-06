@@ -8,9 +8,15 @@
 //! We then call [`println!`] to display `Hello, world!`.
 
 #![deny(missing_docs)]
-#![deny(warnings)]
+// #![deny(warnings)]
 #![no_std]
 #![no_main]
+#![feature(alloc_error_handler)]
+
+extern crate alloc;
+
+#[macro_use]
+extern crate bitflags;
 
 use core::arch::global_asm;
 
@@ -27,6 +33,7 @@ mod sync;
 mod loader; 
 mod config;
 mod timer;
+mod mm;
 pub mod syscall;
 pub mod trap;
 
@@ -51,9 +58,9 @@ pub fn clear_bss() {
 pub fn rust_main() -> ! {
     clear_bss();
     logging::init();
+    mm::init();
+    mm::remap_test();
     trap::init();
-    loader::load_apps();
-    log::info!("time start: {}", timer::get_time());
     trap::enable_timer_interrupt();
     timer::set_next_trigger();
     task::run_first_task();
