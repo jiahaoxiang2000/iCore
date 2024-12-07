@@ -4,7 +4,7 @@ use crate::config::KERNEL_HEAP_SIZE;
 use buddy_system_allocator::LockedHeap;
 
 #[global_allocator]
-/// heap allocator instance
+/// heap allocator instance, here we not to study the `alloc` and `dealloc` algorithm, just use the buddy system allocator
 static HEAP_ALLOCATOR: LockedHeap = LockedHeap::empty();
 
 #[alloc_error_handler]
